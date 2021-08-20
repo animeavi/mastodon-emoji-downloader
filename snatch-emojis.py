@@ -35,23 +35,6 @@ class Emoji(object):
     def __repr__(self) -> str:
         return self.__str__()
 
-# Thanks https://stackoverflow.com/a/295466
-
-
-def slugify(value):
-    """
-    Normalizes string, converts to lowercase, removes non-alpha characters,
-    and converts spaces to hyphens.
-    """
-    import unicodedata
-    import re
-    value = unicodedata.normalize('NFKD', value)
-    value = str(re.sub('[^\w\s-]', '', value).strip().lower())
-    value = str(re.sub('[-\s]+', '-', value))
-    # ...
-    return value
-
-
 def get_emojis(instance: str) -> List:
     r = get(URL_GET_EMOJIS.format(instance=instance))
     r.raise_for_status()
@@ -63,9 +46,9 @@ def download_emoji(instance: str, emoji: Emoji):
     if not p.lexists(instance) or not p.isdir(instance):
         os.mkdir(instance)
 
-    outname = slugify(emoji.shortcode.replace(':', ''))
+    outname = emoji.shortcode.replace(':', '')
     _, filext = p.splitext(emoji.url)
-    category = slugify(emoji.category)
+    category = emoji.category
 
     outdir = p.join(instance, category)
     outfile = p.join(outdir, outname) + f"{filext}"
